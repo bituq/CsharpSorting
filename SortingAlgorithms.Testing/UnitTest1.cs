@@ -25,7 +25,7 @@ namespace SortingAlgorithms.Testing
 			IEnumerable<Byte> seq = _sequence;
 			string res = String.Empty;
 
-			var resList = new List<Byte>(MergeSort.Sort(seq));
+			var resList = new List<Byte>(MergeSort<Byte>.Sort(seq));
 
 			bool success = false;
 
@@ -57,7 +57,7 @@ namespace SortingAlgorithms.Testing
 			IEnumerable<Byte> seq = _sequence;
 			string res = String.Empty;
 
-			var resList = new List<Byte>(await MergeSortAsync.SortAsync(seq));
+			var resList = new List<Byte>(await MergeSort<Byte>.SortAsync(seq));
 
 			bool success = false;
 
