@@ -1,41 +1,54 @@
 ﻿namespace SortingAlgorithms
 {
-	public static class MergeSort
+	public static class MergeSort<T> where T : IComparable
 	{
-		static T Min<T>(T first, T last) where T : IComparable => first.CompareTo(last) < 0 ? first : last;
+		static T Min(T first, T last) => first.CompareTo(last) < 0 ? first : last;
+
 		static byte IsOdd(int n) => Convert.ToByte(n % 2 != 0);
 
-		public static IEnumerable<T> Sort<T>(IEnumerable<T> sequence) where T : IComparable
+		static IEnumerable<T> SortIfValid(IEnumerable<T> sequence) => sequence.Count() > 1 ? Sort(sequence) : sequence;
+
+		static async Task<IEnumerable<T>> SortIfValidAsync(IEnumerable<T> sequence) => sequence.Count() > 1 ? await SortAsync(sequence) : sequence;
+
+		static T[] DistributeOrdered(IEnumerable<T> left, IEnumerable<T> right)
 		{
-			int half = sequence.Count() / 2;
+			T[] res = new T[left.Count() + right.Count()];
+			int i;
 
-			IEnumerable<T> left = sequence.Take(half);
-
-			if (left.Count() > 1)
-				left = Sort(left);
-
-			IEnumerable<T> right = sequence.TakeLast(half + IsOdd(half * 2));
-
-			if (right.Count() > 1)
-				right = Sort(right);
-
-			T[] result = new T[sequence.Count()];
-			int resultIndex;
-
-			for (resultIndex = 0; left.Any() && right.Any(); resultIndex++)
+			for (i = 0; left.Any() && right.Any(); i++)
 			{
-				result[resultIndex] = Min(left.First(), right.First());
+				res[i] = Min(left.First(), right.First());
 
-				if (result[resultIndex].Equals(left.First()))
+				if (res[i].Equals(left.First()))
 					left = left.TakeLast(left.Count() - 1);
 				else
 					right = right.TakeLast(right.Count() - 1);
 			}
 
-			foreach (T item in left.Count() > 0 ? left : right)
-				result[resultIndex++] = item;
+			foreach (T item in left.Any() ? left : right)
+				res[i++] = item;
 
-			return result;
+			return res;
+		}
+
+		public static async Task<IEnumerable<T>> SortAsync(IEnumerable<T> sequence)
+		{
+			int half = sequence.Count() / 2;
+
+			IEnumerable<T> left = await SortIfValidAsync(sequence.Take(half));
+			IEnumerable<T> right = await SortIfValidAsync(sequence.TakeLast(half + IsOdd(half * 2)));
+
+			return DistributeOrdered(left, right);
+		}
+
+		public static IEnumerable<T> Sort(IEnumerable<T> sequence)
+		{
+			int half = sequence.Count() / 2;
+
+			IEnumerable<T> left = SortIfValid(sequence.Take(half));
+			IEnumerable<T> right = SortIfValid(sequence.TakeLast(half + IsOdd(half * 2)));
+
+			return DistributeOrdered(left, right);
 		}
 	}
 }
