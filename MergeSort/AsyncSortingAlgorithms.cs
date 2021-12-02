@@ -1,23 +1,23 @@
 ﻿namespace SortingAlgorithms
 {
-	public static class MergeSort
+	public static class MergeSortAsync
 	{
 		static T Min<T>(T first, T last) where T : IComparable => first.CompareTo(last) < 0 ? first : last;
 		static byte IsOdd(int n) => Convert.ToByte(n % 2 != 0);
 
-		public static IEnumerable<T> Sort<T>(IEnumerable<T> sequence) where T : IComparable
+		public static async Task<IEnumerable<T>> SortAsync<T>(IEnumerable<T> sequence) where T : IComparable
 		{
 			int half = sequence.Count() / 2;
 
 			IEnumerable<T> left = sequence.Take(half);
 
 			if (left.Count() > 1)
-				left = Sort(left);
+				left = await SortAsync(left);
 
 			IEnumerable<T> right = sequence.TakeLast(half + IsOdd(half * 2));
 
 			if (right.Count() > 1)
-				right = Sort(right);
+				right = await SortAsync(right);
 
 			T[] result = new T[sequence.Count()];
 			int resultIndex;
