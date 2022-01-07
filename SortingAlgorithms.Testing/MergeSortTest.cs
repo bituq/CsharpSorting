@@ -8,7 +8,7 @@ namespace SortingAlgorithms.Testing
 	public class Tests
 	{
 		const string MergeCategory = "Merge Sort";
-		Byte[] _sequence = new byte[8];
+		Byte[] _sequence = new byte[32];
 
 		[SetUp]
 		public void Setup()
